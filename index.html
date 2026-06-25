@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Path We Took</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Georgia, "Times New Roman", serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(#fff4df, #ffd9a3);
+      color: #2b2118;
+      overflow-x: hidden;
+    }
+
+    .screen {
+      min-height: 100vh;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      position: relative;
+    }
+
+    .screen.active {
+      display: flex;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.92);
+      border: 3px solid #8b5a2b;
+      border-radius: 28px;
+      padding: 32px;
+      max-width: 780px;
+      width: 100%;
+      box-shadow: 0 18px 40px rgba(74, 48, 20, 0.25);
+      text-align: center;
+      position: relative;
+      z-index: 2;
+    }
+
+    h1 {
+      font-size: 42px;
+      margin-bottom: 12px;
+    }
+
+    h2 {
+      font-size: 30px;
+      margin-bottom: 16px;
+    }
+
+    p {
+      font-size: 18px;
+      line-height: 1.6;
+      margin-bottom: 18px;
+    }
+
+    button {
+      cursor: pointer;
+      border: none;
+      border-radius: 999px;
+      padding: 14px 24px;
+      font-size: 17px;
+      font-weight: bold;
+      background: #c76a28;
+      color: white;
+      box-shadow: 0 6px 0 #884217;
+      transition: 0.15s;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      background: #d87932;
+    }
+
+    button:active {
+      transform: translateY(3px);
+      box-shadow: 0 3px 0 #884217;
+    }
+
+    .small {
+      font-size: 14px;
+      color: #6f5945;
+    }
+
+    .heart {
+      color: #c92a4b;
+    }
+
+    .trail {
+      font-size: 46px;
+      margin: 20px 0;
+      letter-spacing: 8px;
+      animation: float 2s infinite ease-in-out;
+    }
+
+    .progress-wrap {
+      width: 100%;
+      background: #f2d2a1;
+      border-radius: 999px;
+      height: 14px;
+      margin: 20px 0 28px;
+      overflow: hidden;
+      border: 1px solid #8b5a2b;
+    }
+
+    .progress {
+      height: 100%;
+      background: linear-gradient(90deg, #c76a28, #f0a241);
+      width: 0%;
+      transition: width 0.4s ease;
+    }
+
+    .chapter {
+      color: #9b4c16;
+      font-weight: bold;
+      margin-bottom: 8px;
+      font-size: 15px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .choices {
+      display: grid;
+      gap: 14px;
+      margin-top: 24px;
+    }
+
+    .choice {
+      background: #fff8ec;
+      color: #2b2118;
+      border: 2px solid #d59a58;
+      border-radius: 18px;
+      padding: 18px;
+      text-align: left;
+      box-shadow: none;
+      font-weight: normal;
+    }
+
+    .choice:hover {
+      background: #ffe9c8;
+      transform: translateY(-2px);
+    }
+
+    .result-list {
+      text-align: left;
+      display: grid;
+      gap: 14px;
+      margin-top: 24px;
+    }
+
+    .result-item {
+      padding: 18px;
+      border-radius: 18px;
+      border: 2px solid;
+    }
+
+    .match {
+      background: #eefbea;
+      border-color: #60a044;
+    }
+
+    .miss {
+      background: #fff0ef;
+      border-color: #d75d50;
+    }
+
+    .memory-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 14px;
+      margin: 24px 0;
+    }
+
+    .memory {
+      background: #fff8ec;
+      border: 2px dashed #c76a28;
+      padding: 16px;
+      border-radius: 18px;
+      font-size: 24px;
+    }
+
+    .bg-scene {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      opacity: 0.8;
+    }
+
+    .sun {
+      position: absolute;
+      top: 60px;
+      right: 80px;
+      font-size: 80px;
+      animation: float 3s infinite ease-in-out;
+    }
+
+    .trees {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      font-size: 44px;
+      white-space: nowrap;
+      overflow: hidden;
+      opacity: 0.65;
+    }
+
+    .leaf {
+      position: fixed;
+      top: -40px;
+      font-size: 24px;
+      animation: fall linear infinite;
+      z-index: 0;
+      opacity: 0.7;
+    }
+
+    @keyframes fall {
+      to {
+        transform: translateY(110vh) rotate(360deg);
+      }
+    }
+
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-8px);
+      }
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 34px;
+      }
+
+      h2 {
+        font-size: 26px;
+      }
+
+      .card {
+        padding: 24px;
+      }
+
+      p {
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="leaves"></div>
+
+  <section id="intro" class="screen active">
+    <div class="bg-scene">
+      <div class="sun">☀️</div>
+      <div class="trees">🌲 🌳 🌲 🌳 🌲 🌳 🌲 🌳 🌲 🌳 🌲 🌳 🌲</div>
+    </div>
+
+    <div class="card">
+      <div class="trail">🗺️</div>
+      <h1>The Path We Took</h1>
+      <h2>Pranay <span class="heart">❤️</span> Ashley</h2>
+      <p>
+        Every relationship has thousands of tiny choices.
+        Ashley, your mission is to walk through the trail and guess what Pranay would have chosen.
+      </p>
+      <p class="small">
+        Every right answer unlocks a memory. At the end, you’ll see how close your path was to his.
+      </p>
+      <button onclick="startGame()">Begin Journey</button>
+    </div>
+  </section>
+
+  <section id="game" class="screen">
+    <div class="bg-scene">
+      <div class="sun" id="sceneIcon">🌅</div>
+      <div class="trees">🌲 🌳 🌲 🌳 🌲 🌳 🌲 🌳 🌲 🌳 🌲 🌳 🌲</div>
+    </div>
+
+    <div class="card">
+      <div class="chapter" id="chapter"></div>
+      <p class="small" id="questionCount"></p>
+      <div class="progress-wrap">
+        <div class="progress" id="progress"></div>
+      </div>
+
+      <div class="trail" id="trailIcon">🚶🏻‍♀️</div>
+      <h2 id="title"></h2>
+      <p id="prompt"></p>
+
+      <div class="choices" id="choices"></div>
+    </div>
+  </section>
+
+  <section id="results" class="screen">
+    <div class="bg-scene">
+      <div class="sun">✨</div>
+      <div class="trees">🏡 🌲 🌳 🌲 🏕️ 🌲 🌳 🌲 🏡 🌲 🌳</div>
+    </div>
+
+    <div class="card">
+      <div class="trail">🏡</div>
+      <h1 id="endingTitle"></h1>
+      <p id="scoreText"></p>
+      <h2 id="percentText"></h2>
+
+      <h2>Your Scrapbook</h2>
+      <div class="memory-grid" id="memoryGrid"></div>
+
+      <h2>The Map Reveal</h2>
+      <div class="result-list" id="resultList"></div>
+
+      <br />
+      <button onclick="restartGame()">❤️ Walk It Again</button>
+    </div>
+  </section>
+
+  <script>
+    const questions = [
+      {
+        chapter: "Chapter 1 — First Meeting",
+        scene: "🌅",
+        icon: "🚶🏻‍♀️",
+        title: "The First Impression",
+        prompt: "When Pranay first starts liking someone, what is he most likely to do?",
+        choices: [
+          "Act super confident and obvious about it",
+          "Pretend he is normal but overthink everything later",
+          "Tell his friends immediately",
+          "Avoid showing it at all costs"
+        ],
+        answer: 1,
+        memory: "🌅 First Spark"
+      },
+      {
+        chapter: "Chapter 1 — First Meeting",
+        scene: "☕",
+        icon: "☕",
+        title: "The Awkward Moment",
+        prompt: "If Pranay embarrassed himself in front of you, what would he do?",
+        choices: [
+          "Laugh it off immediately",
+          "Try to explain himself way too much",
+          "Pretend nothing happened",
+          "Blame the situation"
+        ],
+        answer: 1,
+        memory: "☕ Awkward Laugh"
+      },
+      {
+        chapter: "Chapter 2 — Date Trail",
+        scene: "🎡",
+        icon: "🎯",
+        title: "The Date Choice",
+        prompt: "If Pranay planned a casual date, what would he probably pick?",
+        choices: [
+          "Dinner somewhere nice",
+          "Mini golf or something competitive",
+          "A movie",
+          "Coffee and walking around"
+        ],
+        answer: 1,
+        memory: "🎯 Game Night"
+      },
+      {
+        chapter: "Chapter 2 — Date Trail",
+        scene: "🍟",
+        icon: "🍟",
+        title: "The Food Debate",
+        prompt: "You can only pick one late-night snack. What does Pranay choose?",
+        choices: [
+          "Taco Bell",
+          "Ice cream",
+          "Pizza",
+          "Chicken tenders and fries"
+        ],
+        answer: 3,
+        memory: "🍟 Snack Stop"
+      },
+      {
+        chapter: "Chapter 3 — Adventure Valley",
+        scene: "🚗",
+        icon: "🦕",
+        title: "The Random Stop",
+        prompt: "You are driving and see a weird roadside attraction. What does Pranay do?",
+        choices: [
+          "Immediately wants to stop because it is funny",
+          "Says no because there are plans",
+          "Only stops if Ashley wants to",
+          "Says they will go next time"
+        ],
+        answer: 0,
+        memory: "🦕 Weird Detour"
+      },
+      {
+        chapter: "Chapter 3 — Adventure Valley",
+        scene: "⛰️",
+        icon: "🧭",
+        title: "The Vacation Style",
+        prompt: "On vacation, Pranay would rather:",
+        choices: [
+          "Relax and do nothing",
+          "Have every hour planned",
+          "Do one main activity, then freestyle",
+          "Try to see absolutely everything"
+        ],
+        answer: 2,
+        memory: "🧭 Adventure Map"
+      },
+      {
+        chapter: "Chapter 4 — Stormy Hill",
+        scene: "🌧️",
+        icon: "🌧️",
+        title: "The Argument",
+        prompt: "If you had a small argument, what would Pranay most likely do first?",
+        choices: [
+          "Want to solve it immediately",
+          "Get quiet and think first",
+          "Make a joke to break the tension",
+          "Pretend he is not bothered"
+        ],
+        answer: 0,
+        memory: "🌧️ Storm Passed"
+      },
+      {
+        chapter: "Chapter 4 — Stormy Hill",
+        scene: "🔥",
+        icon: "🔥",
+        title: "The Bad Day",
+        prompt: "If Pranay had a rough day, what would help him most?",
+        choices: [
+          "A long serious talk",
+          "Food and a distraction",
+          "Being left alone",
+          "Advice and a plan"
+        ],
+        answer: 1,
+        memory: "🔥 Campfire Comfort"
+      },
+      {
+        chapter: "Chapter 5 — Inside Joke Bridge",
+        scene: "🌉",
+        icon: "😂",
+        title: "The Laugh Test",
+        prompt: "What kind of joke gets Pranay the most?",
+        choices: [
+          "Dry sarcasm",
+          "Random dumb humor",
+          "Roasting each other",
+          "Inside jokes no one else understands"
+        ],
+        answer: 3,
+        memory: "😂 Inside Joke"
+      },
+      {
+        chapter: "Chapter 5 — Inside Joke Bridge",
+        scene: "🎁",
+        icon: "🎁",
+        title: "The Surprise",
+        prompt: "If Pranay planned a surprise for you, it would probably be:",
+        choices: [
+          "Something sentimental",
+          "Something funny and chaotic",
+          "Something expensive",
+          "Something simple but thoughtful"
+        ],
+        answer: 3,
+        memory: "🎁 Little Surprise"
+      },
+      {
+        chapter: "Chapter 6 — Forever Fork",
+        scene: "✨",
+        icon: "🏡",
+        title: "The Future Weekend",
+        prompt: "A perfect weekend with Ashley would be:",
+        choices: [
+          "A trip somewhere new",
+          "Staying in, food, movies, and relaxing",
+          "Doing activities all day",
+          "A mix of going out and doing nothing together"
+        ],
+        answer: 3,
+        memory: "🏡 Cozy Weekend"
+      },
+      {
+        chapter: "Chapter 6 — Forever Fork",
+        scene: "🌌",
+        icon: "❤️",
+        title: "The Big Question",
+        prompt: "What does Pranay value most in your relationship?",
+        choices: [
+          "How much fun you have",
+          "How comfortable you are together",
+          "How similar you think",
+          "How much you push each other"
+        ],
+        answer: 1,
+        memory: "❤️ Home"
+      }
+    ];
+
+    let currentQuestion = 0;
+    let ashleyAnswers = [];
+
+    function startGame() {
+      document.getElementById("intro").classList.remove("active");
+      document.getElementById("game").classList.add("active");
+      showQuestion();
+    }
+
+    function showQuestion() {
+      const q = questions[currentQuestion];
+
+      document.getElementById("chapter").textContent = q.chapter;
+      document.getElementById("questionCount").textContent =
+        `Trail stop ${currentQuestion + 1} of ${questions.length}`;
+      document.getElementById("progress").style.width =
+        `${((currentQuestion + 1) / questions.length) * 100}%`;
+
+      document.getElementById("sceneIcon").textContent = q.scene;
+      document.getElementById("trailIcon").textContent = q.icon;
+      document.getElementById("title").textContent = q.title;
+      document.getElementById("prompt").textContent = q.prompt;
+
+      const choicesDiv = document.getElementById("choices");
+      choicesDiv.innerHTML = "";
+
+      q.choices.forEach((choice, index) => {
+        const button = document.createElement("button");
+        button.className = "choice";
+        button.innerHTML = `<strong>${String.fromCharCode(65 + index)}.</strong> ${choice}`;
+        button.onclick = () => chooseAnswer(index);
+        choicesDiv.appendChild(button);
+      });
+    }
+
+    function chooseAnswer(index) {
+      ashleyAnswers[currentQuestion] = index;
+
+      if (currentQuestion < questions.length - 1) {
+        currentQuestion++;
+        showQuestion();
+      } else {
+        showResults();
+      }
+    }
+
+    function showResults() {
+      document.getElementById("game").classList.remove("active");
+      document.getElementById("results").classList.add("active");
+
+      let score = 0;
+      questions.forEach((q, i) => {
+        if (ashleyAnswers[i] === q.answer) score++;
+      });
+
+      const percent = Math.round((score / questions.length) * 100);
+
+      let ending = "";
+      if (percent >= 90) ending = "Soulmate Route ❤️";
+      else if (percent >= 75) ending = "Almost the Same Brain 🧠";
+      else if (percent >= 55) ending = "Pretty Close Adventure 🌲";
+      else if (percent >= 35) ending = "We Need Another Date 😂";
+      else ending = "Who Have You Been Dating? 💀";
+
+      document.getElementById("endingTitle").textContent = ending;
+      document.getElementById("scoreText").textContent =
+        `Ashley found ${score} memories out of ${questions.length}.`;
+      document.getElementById("percentText").textContent =
+        `${percent}% of the path matched Pranay's.`;
+
+      const memoryGrid = document.getElementById("memoryGrid");
+      memoryGrid.innerHTML = "";
+
+      questions.forEach((q, i) => {
+        const div = document.createElement("div");
+        div.className = "memory";
+        div.textContent = ashleyAnswers[i] === q.answer ? q.memory : "🔒 Hidden";
+        memoryGrid.appendChild(div);
+      });
+
+      const resultList = document.getElementById("resultList");
+      resultList.innerHTML = "";
+
+      questions.forEach((q, i) => {
+        const matched = ashleyAnswers[i] === q.answer;
+        const div = document.createElement("div");
+        div.className = `result-item ${matched ? "match" : "miss"}`;
+
+        div.innerHTML = `
+          <strong>${matched ? "✅ Same path" : "🌙 Different path"} — ${q.title}</strong>
+          <p>${q.prompt}</p>
+          <p><strong>Ashley chose:</strong> ${q.choices[ashleyAnswers[i]]}</p>
+          <p><strong>Pranay chose:</strong> ${q.choices[q.answer]}</p>
+        `;
+
+        resultList.appendChild(div);
+      });
+    }
+
+    function restartGame() {
+      currentQuestion = 0;
+      ashleyAnswers = [];
+      document.getElementById("results").classList.remove("active");
+      document.getElementById("intro").classList.add("active");
+    }
+
+    function createLeaves() {
+      const leaves = document.getElementById("leaves");
+      const symbols = ["🍂", "🍁", "✨"];
+
+      for (let i = 0; i < 18; i++) {
+        const leaf = document.createElement("div");
+        leaf.className = "leaf";
+        leaf.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+        leaf.style.left = Math.random() * 100 + "vw";
+        leaf.style.animationDuration = 7 + Math.random() * 8 + "s";
+        leaf.style.animationDelay = Math.random() * 5 + "s";
+        leaves.appendChild(leaf);
+      }
+    }
+
+    createLeaves();
+  </script>
+</body>
+</html>
